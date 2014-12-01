@@ -17,10 +17,12 @@ module.exports = function(grunt) {
 	var _ = require('lodash');
 	_.str = require('underscore.string');
 	var dependencyTools = require('../lib/dependencyTools');
+    var replace = require('../lib/replace');
 
 	grunt.registerMultiTask('bower_concat', 'Concatenate installed Bower packages.', function() {
 		var jsDest = this.data.dest;
 		var cssDest = this.data.cssDest;
+        replace = new replace();
 
 		// Require at least one of [`dest`, `cssDest`]
 		if (!jsDest && !cssDest) {
@@ -93,9 +95,16 @@ module.exports = function(grunt) {
 						var mainCssFiles = mainFiles.filter(function(file) {
 							return isFileExtension(file, '.css');
 						});
-
-						jsFiles[name] = mainJsFiles.map(grunt.file.read);
-						cssFiles[name] = mainCssFiles.map(grunt.file.read);
+                        if (jsDest) {
+                            jsFiles[name] = mainJsFiles.map(grunt.file.read);
+                        }
+						//cssFiles[name] = mainCssFiles.map(grunt.file.read);
+                        if (cssDest) {
+                            cssFiles[name] = '';
+                            _.each(mainCssFiles, function(cssFilePath){
+                                cssFiles[name] += replace.run(cssFilePath, path.dirname(cssDest));
+                            });
+                        }
 					}
 					else {
 						// Try to find and concat minispade package: packages/_name_/lib/main.js
