@@ -18,11 +18,11 @@ module.exports = function(grunt) {
 	_.str = require('underscore.string');
 	var dependencyTools = require('../lib/dependencyTools');
     var replace = require('../lib/replace');
+    replace = new replace();
 
 	grunt.registerMultiTask('bower_concat', 'Concatenate installed Bower packages.', function() {
 		var jsDest = this.data.dest;
 		var cssDest = this.data.cssDest;
-        replace = new replace();
 
 		// Require at least one of [`dest`, `cssDest`]
 		if (!jsDest && !cssDest) {
